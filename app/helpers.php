@@ -309,3 +309,108 @@ function upload_instance_logo($file, $instance_id) {
 
     return ['success' => false, 'error' => 'Failed to save file'];
 }
+
+/**
+ * Session Mode Management
+ */
+
+/**
+ * Get current instance mode from session
+ */
+function get_instance_mode() {
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+    return $_SESSION['instance_mode'] ?? 'multi';
+}
+
+/**
+ * Set instance mode in session
+ */
+function set_instance_mode($mode) {
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+    $_SESSION['instance_mode'] = $mode;
+}
+
+/**
+ * Get instances based on current mode
+ */
+function get_current_instances() {
+    $config = load_config();
+    $mode = get_instance_mode();
+
+    if ($mode === 'single' && !empty($config['instances'])) {
+        // Return only first enabled instance in single mode
+        foreach ($config['instances'] as $instance) {
+            if ($instance['enabled']) {
+                return [$instance];
+            }
+        }
+    }
+
+    // Return all enabled instances in multi mode
+    return array_filter($config['instances'], function($inst) {
+        return $inst['enabled'];
+    });
+}
+
+/**
+ * Render navigation bar with mode switcher
+ */
+function render_navbar($current_instance = null) {
+    $config = load_config();
+    $mode = get_instance_mode();
+    $instance_id = $current_instance['id'] ?? null;
+
+    $mode_text = $mode === 'single' ? 'Single Instance' : 'Multi Instance';
+    $mode_icon = $mode === 'single' ? 'fa-cube' : 'fa-cubes';
+
+    echo '<nav class="navbar">';
+    echo '<div class="navbar-content">';
+
+    // Logo and title
+    echo '<div class="navbar-brand">';
+    echo '<i class="fas fa-shield-alt"></i>';
+    echo '<span>' . htmlspecialchars($config['app']['name']) . '</span>';
+    echo '</div>';
+
+    // Current instance indicator
+    if ($current_instance) {
+        echo '<div class="navbar-instance">';
+        echo '<i class="fas fa-server"></i>';
+        echo '<span>' . htmlspecialchars($current_instance['name']) . '</span>';
+        echo '</div>';
+    }
+
+    // Mode switcher and actions
+    echo '<div class="navbar-actions">';
+
+    // Mode switcher
+    echo '<div class="mode-switcher">';
+    echo '<button class="mode-btn" onclick="toggleMode()">';
+    echo '<i class="fas ' . $mode_icon . '"></i>';
+    echo '<span>' . $mode_text . '</span>';
+    echo '</button>';
+    echo '</div>';
+
+    // Home button
+    echo '<a href="index.php" class="navbar-btn">';
+    echo '<i class="fas fa-home"></i>';
+    echo '<span>Home</span>';
+    echo '</a>';
+
+    echo '</div>'; // navbar-actions
+    echo '</div>'; // navbar-content
+    echo '</nav>';
+
+    // Add mode toggle script
+    echo '<script>';
+    echo 'function toggleMode() {';
+    echo '  const currentMode = "' . $mode . '";';
+    echo '  const newMode = currentMode === "single" ? "multi" : "single";';
+    echo '  window.location.href = "index.php?switch_mode=" + newMode;';
+    echo '}';
+    echo '</script>';
+}
