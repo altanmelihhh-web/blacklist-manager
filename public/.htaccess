@@ -1,0 +1,19 @@
+Options -Indexes +FollowSymLinks
+RewriteEngine On
+
+# Redirect to index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+# Security headers
+<IfModule mod_headers.c>
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Deny access to config and data directories
+<IfModule mod_rewrite.c>
+    RewriteRule ^(config|data|app|cron)/ - [F,L]
+</IfModule>

@@ -1,0 +1,79 @@
+# Blacklist Manager - Git Ignore File
+
+# Configuration Files
+config/config.php
+.env
+
+# Data Directory (instance data)
+data/*
+!data/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# Cache
+cache/
+*.cache
+
+# Uploaded Files
+public/images/logos/*
+!public/images/logos/.gitkeep
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# IDE Files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*.bak
+*~.nib
+
+# Composer
+/vendor/
+composer.phar
+composer.lock
+
+# Node (if using npm)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Lock Files
+*.lock
+.lock
+
+# Backup Files
+*.backup
+*.bak
+backup/
+
+# Excel Templates (keep example, ignore generated)
+data/*.xlsx
+!data/template.xlsx
+
+# PHP
+.phpunit.result.cache
+
+# Environment
+.env.local
+.env.*.local
+
+# Build
+/build/
+/dist/
